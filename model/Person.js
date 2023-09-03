@@ -1,6 +1,6 @@
-import { Schema, model } from 'mongoose';
+import mongoose from 'mongoose';
 
-const personSchema = new Schema({
+const personSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -10,31 +10,31 @@ const personSchema = new Schema({
   },
   parents: [
     {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Person',
     },
   ],
   grandparents: [
     {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Person',
     },
   ],
   partners: [
     {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Person',
     },
   ],
   children: [
     {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Person',
     },
   ],
   friends: [
     {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Person',
     },
   ],
@@ -46,30 +46,30 @@ const personSchema = new Schema({
 
 // Add a pre-save hook to update the "path" field
 personSchema.pre('save', async function (next) {
-  const person = this;
+  const currentPerson = this;
 
   // Initialize the path as null
-  person.path = null;
+  currentPerson.path = null;
 
   // Helper function to recursively build the path
-  async function buildPath(currentPerson) {
-    if (currentPerson.parents && currentPerson.parents.length > 0) {
-      const parentPromises = currentPerson.parents.map(async (parentId) => {
-        const parent = await model('Person').findById(parentId);
+  async function buildPath(person) {
+    if (person.parents && person.parents.length > 0) {
+      const parentPromises = person.parents.map(async (parentId) => {
+        const parent = await mongoose.model('Person').findById(parentId);
         await buildPath(parent);
       });
       await Promise.all(parentPromises);
-      person.path = (person.path || '') + currentPerson._id + ',';
+      currentPerson.path = (currentPerson.path || '') + person._id + ',';
     } else {
-      person.path = ',' + person._id + ',';
+      currentPerson.path = ',' + currentPerson._id + ',';
     }
   }
 
-  await buildPath(person);
+  await buildPath(currentPerson);
 
   next();
 });
 
-const Person = model('Person', personSchema);
+const Person = mongoose.model('Person', personSchema);
 
 export default Person;
