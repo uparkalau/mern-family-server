@@ -25,7 +25,7 @@ Before you begin, ensure you have met the following requirements:
 1. Clone this repository:
 
    ```bash
-   git clone https://github.com/yourusername/mern-family-server.git
+   git clone https://github.com/uparkalau/mern-family-server.git
    cd mern-family-server
    ```
 
@@ -36,7 +36,7 @@ Before you begin, ensure you have met the following requirements:
    ```
 
 3. Create a `.env` file in the project root and configure your MongoDB connection:
-
+  ( by default database link provided )
    ```env
    DB_USERNAME=your_db_username
    DB_PASSWORD=your_db_password
